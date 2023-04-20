@@ -1,5 +1,5 @@
 import { createClient } from 'redis'
 
-import buildMakeCache from './base-cache-access'
+import makeBuildMakeCache from './base-cache-access'
 
-export default buildMakeCache({ createClient })
+export default makeBuildMakeCache({ createClient })
