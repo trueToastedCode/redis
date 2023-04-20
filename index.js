@@ -7,9 +7,11 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
   async function set ({ id, info, timeLeftMs, callback }) {
     const client = await makeCache()
     if (timeLeftMs) {
-      return client.set(id, info, 'EX', Math.round(timeLeftMs / 1000), callback)
+      await client.set(id, info, 'EX', Math.round(timeLeftMs / 1000), callback)
+    } else {
+      await client.set(id, info)
     }
-    return client.set(id, info)
+    return { id, ...info }
   }
   async function find ({ id }) {
     const client = await makeCache()
