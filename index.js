@@ -4,7 +4,25 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
     findObj,
     remove
   })
-  async function setObj ({ info, timeLeftS, callback }) {
+  /**
+   * 
+   * @param {object} info - Object to be cached
+   * @param {number} timeLeftS - Time left before removal in seconds
+   * @param {number} expireAt - Timestamp in milliseoconds for removal
+   * @param {function} callback - 
+   * @returns {object} Cached object
+   */
+  async function setObj ({ info, timeLeftS, expireAt, callback }) {
+    if (expireAt && timeLeftS) {
+      throw new Error('Specify either timeLeftS or expireAt but not both')
+    }
+    if (expireAt) {
+      const timeLeftMs = expireAt - Date.now()
+      if (timeLeftMs < 1000) {
+        throw new Error('expireAt has to be at least one second into the future')
+      }
+      timeLeftS = Math.round(timeLeftMs / 1000)
+    }
     const client = await makeCache()
     await client.set(
       info.id, JSON.stringify(info),
