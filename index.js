@@ -1,19 +1,19 @@
 export default function makeDefaultCacheFunctions ({ makeCache }) {
   return Object.freeze({
-    set,
-    find,
+    setObj,
+    findObj,
     remove
   })
-  async function set ({ info, timeLeftMs, callback }) {
+  async function setObj ({ info, timeLeftMs, callback }) {
     const client = await makeCache()
     if (timeLeftMs) {
-      await client.set(info.id, info, 'EX', Math.round(timeLeftMs / 1000), callback)
+      await client.set(info.id, JSON.stringify(info), 'EX', Math.round(timeLeftMs / 1000), callback)
     } else {
-      await client.set(info.id, info)
+      await client.set(info.id, JSON.stringify(info))
     }
-    return { id, ...info }
+    return info
   }
-  async function find ({ id }) {
+  async function findObj ({ id }) {
     const client = await makeCache()
     return client.get(id)
   }
