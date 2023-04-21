@@ -28,6 +28,7 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
     const client = await makeCache()
     await client.set(
       id,
+      content,
       timeLeftS ? { EX: timeLeftS } : undefined
     )
     return { id, content }
