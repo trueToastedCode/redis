@@ -1,18 +1,20 @@
 export default function makeDefaultCacheFunctions ({ makeCache }) {
   return Object.freeze({
+    set,
     setObj,
+    find,
     findObj,
     remove
   })
   /**
    * 
-   * @param {object} info - Object to be cached
+   * @param {string} id - Id of item
+   * @param {string} content - Data of item
    * @param {number} timeLeftS - Time left before removal in seconds
    * @param {number} expireAt - Timestamp in milliseoconds for removal
-   * @param {function} callback - 
-   * @returns {object} Cached object
+   * @returns {object}
    */
-  async function setObj ({ info, timeLeftS, expireAt, callback }) {
+  async function set ({ id, content, timeLeftS, expireAt }) {
     if (expireAt && timeLeftS) {
       throw new Error('Specify either timeLeftS or expireAt but not both')
     }
@@ -25,15 +27,33 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
     }
     const client = await makeCache()
     await client.set(
-      info.id, JSON.stringify(info),
-      timeLeftS ? { EX: timeLeftS } : undefined,
-      callback
+      id,
+      timeLeftS ? { EX: timeLeftS } : undefined
     )
+    return { id, content }
+  }
+  /**
+   * 
+   * @param {object} info - Object to be cached
+   * @param {number} timeLeftS - Time left before removal in seconds
+   * @param {number} expireAt - Timestamp in milliseoconds for removal
+   * @returns {object} Cached object
+   */
+  async function setObj ({ info, timeLeftS, expireAt }) {
+    await set({
+      id: info.id,
+      content: JSON.stringify(info),
+      timeLeftS,
+      expireAt
+    })
     return info
   }
-  async function findObj ({ id }) {
+  async function find ({ id }) {
     const client = await makeCache()
-    const result = await client.get(id)
+    return client.get(id)
+  }
+  async function findObj ({ id }) {
+    const result = await find({ id })
     return result ? JSON.parse(result) : null
   }
   async function remove ({ id }) {
