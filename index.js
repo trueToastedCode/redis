@@ -14,7 +14,7 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
    * @param {number} expireAt - Timestamp in milliseoconds for removal
    * @returns {object}
    */
-  async function set ({ id, content, timeLeftS, expireAt }) {
+  async function set ({ id, content, timeLeftS, expireAt, unique = true }) {
     if (expireAt && timeLeftS) {
       throw new Error('Specify either timeLeftS or expireAt but not both')
     }
@@ -26,6 +26,9 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
       timeLeftS = Math.round(timeLeftMs / 1000)
     }
     const client = await makeCache()
+    if (unique && await find({ id })) {
+      throw new Error('Cache duplication error')
+    }
     await client.set(
       id,
       content,
@@ -40,7 +43,7 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
    * @param {number} expireAt - Timestamp in milliseoconds for removal
    * @returns {object} Cached object
    */
-  async function setObj ({ info, timeLeftS, expireAt }) {
+  async function setObj ({ info, timeLeftS, expireAt, unique = true }) {
     await set({
       id: info.id,
       content: JSON.stringify(info),
