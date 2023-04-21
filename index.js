@@ -48,7 +48,8 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
       id: info.id,
       content: JSON.stringify(info),
       timeLeftS,
-      expireAt
+      expireAt,
+      unique
     })
     return info
   }
