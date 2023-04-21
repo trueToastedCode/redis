@@ -29,12 +29,12 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
     if (unique && await find({ id })) {
       throw new Error('Cache duplication error')
     }
-    await client.set(
+    const result = await client.set(
       id,
       content,
       timeLeftS ? { EX: timeLeftS } : undefined
     )
-    return { id, content }
+    return result === 'OK' ? { id, content } : null
   }
   /**
    * 
@@ -44,14 +44,14 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
    * @returns {object} Cached object
    */
   async function setObj ({ info, timeLeftS, expireAt, unique = true }) {
-    await set({
+    const result = await set({
       id: info.id,
       content: JSON.stringify(info),
       timeLeftS,
       expireAt,
       unique
     })
-    return info
+    return result ? info : null
   }
   async function find ({ id }) {
     const client = await makeCache()
