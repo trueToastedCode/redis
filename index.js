@@ -53,15 +53,15 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
     })
     return result ? info : null
   }
-  async function find ({ id }) {
+  async function find (id) {
     const client = await makeCache()
     return client.get(id)
   }
-  async function findObj ({ id }) {
+  async function findObj (id) {
     const result = await find({ id })
     return result ? JSON.parse(result) : null
   }
-  async function remove ({ id }) {
+  async function remove (id) {
     const client = await makeCache()
     return client.del(id)
   }
