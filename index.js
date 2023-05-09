@@ -89,5 +89,6 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
       client.del(id),
       ...lookUps.map(lookUp => client.del(lookUp))
     ])
+    return true
   }
 }
