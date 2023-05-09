@@ -80,12 +80,9 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
     const result = await find({ id, lookUp })
     return result ? JSON.parse(result) : null
   }
-  async function remove ({ id, lookUp, lookUps = [] } = {}) {
-    if (id == null && lookUp == null) {
+  async function remove ({ id, lookUps = [] } = {}) {
+    if (id == null) {
       throw new Error('No id or lookUp supplied')
-    }
-    if (lookUp != null && (lookUps == null || lookUps.length === 0)) {
-      throw new Error('lookUp supplied but no lookUps defined')
     }
     const client = await makeCache()
     await Promise.all([
