@@ -85,10 +85,10 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
       throw new Error('No id or lookUp supplied')
     }
     const client = await makeCache()
-    await Promise.all([
+    const result = await Promise.all([
       client.del(id),
       ...lookUps.map(lookUp => client.del(lookUp))
     ])
-    return true
+    return result[0] === 1
   }
 }
