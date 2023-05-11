@@ -21,6 +21,9 @@ export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys }) {
       if (expireAt && timeLeftS) {
         throw new Error('Specify either timeLeftS or expireAt but not both')
       }
+      if (lookUps.some(item => item == null)) {
+        throw new Error('lookUps cannot contain null values')
+      }
       if (expireAt) {
         const timeLeftMs = expireAt - Date.now()
         if (timeLeftMs < 1000) {
