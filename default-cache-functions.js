@@ -107,6 +107,9 @@ export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys }) {
       if (id == null) {
         throw new Error('No id or lookUp supplied')
       }
+      if (lookUps.some(item => item == null)) {
+        throw new Error('lookUps cannot contain null values')
+      }
       const client = await makeCache()
       const result = await Promise.all([
         client.del(id),
