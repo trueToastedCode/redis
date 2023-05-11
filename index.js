@@ -1,9 +1,11 @@
-export default function makeDefaultCacheFunctions ({ makeCache }) {
+export default function makeDefaultCacheFunctions ({ makeCache, findFirstOfKeys }) {
   return Object.freeze({
     set,
     setObj,
     find,
+    findByVarious,
     findObj,
+    findObjByVarious,
     remove
   })
   /**
@@ -73,12 +75,32 @@ export default function makeDefaultCacheFunctions ({ makeCache }) {
     }
     return client.get(id)
   }
+  async function findByVarious (obj, keys) {
+    const result = findFirstOfKeys(obj, keys)
+    if (result == null) {
+      throw new Error(`Expected at least one key of ${keys}`)
+    }
+    const key = Object.keys(result)[0]
+    return key === 'id'
+      ? find(result)
+      : find({ lookUp: result[key] })
+  }
   async function findObj ({ id, lookUp } = {}) {
     if (id == null && lookUp == null) {
       throw new Error('No id or lookUp supplied')
     }
     const result = await find({ id, lookUp })
     return result ? JSON.parse(result) : null
+  }
+  async function findObjByVarious (obj, keys) {
+    const result = findFirstOfKeys(obj, keys)
+    if (result == null) {
+      throw new Error(`Expected at least one key of ${keys}`)
+    }
+    const key = Object.keys(result)[0]
+    return key === 'id'
+      ? findObj(result)
+      : findObj({ lookUp: result[key] })
   }
   async function remove ({ id, lookUps = [] } = {}) {
     if (id == null) {
