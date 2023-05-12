@@ -1,4 +1,4 @@
-export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys }) {
+export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys, CustomError }) {
   return function makeDefaultCacheFunctions ({ makeCache }) {
     return Object.freeze({
       set,
@@ -82,7 +82,7 @@ export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys }) {
     async function findByVarious (obj, keys) {
       const result = findFirstOfKeys(obj, keys)
       if (result == null) {
-        throw new Error(`Expected at least one key of ${keys}`)
+        throw new CustomError(`Expected at least one key of ${keys}`, 400)
       }
       const key = Object.keys(result)[0]
       return key === 'id'
@@ -99,7 +99,7 @@ export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys }) {
     async function findObjByVarious (obj, keys) {
       const result = findFirstOfKeys(obj, keys)
       if (result == null) {
-        throw new Error(`Expected at least one key of ${keys}`)
+        throw new CustomError(`Expected at least one key of ${keys}`, 400)
       }
       const key = Object.keys(result)[0]
       return key === 'id'
