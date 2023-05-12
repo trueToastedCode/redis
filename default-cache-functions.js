@@ -118,7 +118,9 @@ export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys, Custo
         client.del(id),
         ...lookUps.map(lookUp => client.del(lookUp))
       ])
-      return result[0] === 1
+      return result.some(item => item == null)
+        ? null
+        : result[0] === 1
     }
   }
 }
