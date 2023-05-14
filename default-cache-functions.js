@@ -75,7 +75,7 @@ export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys, Custo
       const client = await makeCache()
       if (id == null) {
         id = await client.get(prefix == null ? lookUp : `${prefix}${lookUp}`)
-        if (id == null) return null
+        return id == null ? null : client.get(id)
       }
       return client.get(prefix == null ? id : `${prefix}${id}`)
     }
