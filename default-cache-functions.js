@@ -42,7 +42,7 @@ export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys, Custo
           timeLeftS ? { EX: timeLeftS } : undefined
         ),
         ...lookUps.map(lookUp => client.set(
-          lookUp,
+          prefix == null ? lookUp : `${prefix}${lookUp}`,
           prefix == null ? id : `${prefix}${id}`,
           timeLeftS ? { EX: timeLeftS } : undefined
         ))
