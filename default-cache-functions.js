@@ -1,5 +1,5 @@
 export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys, CustomError }) {
-  return function makeDefaultCacheFunctions ({ makeCache }) {
+  return function makeDefaultCacheFunctions ({ makeCache, prefix = null }) {
     return Object.freeze({
       set,
       setObj,
@@ -37,13 +37,13 @@ export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys, Custo
       }
       const results = await Promise.all([
         client.set(
-          id,
+          prefix == null ? id : `${prefix}${id}`,
           content,
           timeLeftS ? { EX: timeLeftS } : undefined
         ),
         ...lookUps.map(lookUp => client.set(
           lookUp,
-          id,
+          prefix == null ? id : `${prefix}${id}`,
           timeLeftS ? { EX: timeLeftS } : undefined
         ))
       ])
@@ -74,10 +74,10 @@ export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys, Custo
       }
       const client = await makeCache()
       if (id == null) {
-        id = await client.get(lookUp)
+        id = await client.get(prefix == null ? lookUp : `${prefix}${lookUp}`)
         if (id == null) return null
       }
-      return client.get(id)
+      return client.get(prefix == null ? id : `${prefix}${id}`)
     }
     async function findByVarious (obj, keys) {
       const result = findFirstOfKeys(obj, keys)
@@ -115,8 +115,8 @@ export default function buildMakeDefaultCacheFunctions ({ findFirstOfKeys, Custo
       }
       const client = await makeCache()
       const result = await Promise.all([
-        client.del(id),
-        ...lookUps.map(lookUp => client.del(lookUp))
+        client.del(prefix == null ? id : `${prefix}${id}`),
+        ...lookUps.map(lookUp => client.del(prefix == null ? lookUp : `${prefix}${lookUp}`))
       ])
       return result.some(item => item == null)
         ? null
